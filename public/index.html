@@ -1,0 +1,87 @@
+<html>
+
+<head>
+    <meta charset="UTF-8" />
+    <title>Chat da Rocketseat</title>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.3.0/socket.io.js"></script>
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+    <form id="chat">
+        <input type="text" name="username" placeholder="Digite seu usuário" />
+        <div class="messages"></div>
+        <input type="text" name="message" placeholder="Digite sua mensagem" />
+        <button type="submit">Enviar</button>
+    </form>
+
+
+    <script type="text/javascript">
+
+        var socket = io('http://localhost:3000');
+
+        function renderMessage(message) {
+            $('.messages').append('<div class="message"><strong>' + message.author + '</strong>: ' + message.message + '</div>')
+        }
+
+        socket.on('previousMessages', function (messages) {
+            for (message of messages) {
+                renderMessage(message);
+            }
+        })
+
+        socket.on('receivedMessages', function (message) {
+            renderMessage(message);
+        });
+
+        $('#chat').submit(function (event) {
+
+            event.preventDefault();
+
+            var author = $('input[name=username').val();
+            var message = $('input[name=message').val();
+
+            if (author.length && message.length) {
+                var messageObject = {
+                    author: author,
+                    message: message
+                };
+            }
+
+            renderMessage(messageObject);
+
+            socket.emit('sendMessage', messageObject);
+
+        });
+
+    </script>
+    <!-- The core Firebase JS SDK is always required and must be listed first -->
+    <script src="https://www.gstatic.com/firebasejs/7.2.3/firebase-app.js"></script>
+
+    <!-- TODO: Add SDKs for Firebase products that you want to use
+     https://firebase.google.com/docs/web/setup#available-libraries -->
+    <script src="https://www.gstatic.com/firebasejs/7.2.3/firebase-analytics.js"></script>
+
+    <script>
+        // Your web app's Firebase configuration
+        var firebaseConfig = {
+            apiKey: "AIzaSyAsT0vmjWQpWgFbSFc_UVQ7G3Ip5E59VNM",
+            authDomain: "chatnode-ae58c.firebaseapp.com",
+            databaseURL: "https://chatnode-ae58c.firebaseio.com",
+            projectId: "chatnode-ae58c",
+            storageBucket: "chatnode-ae58c.appspot.com",
+            messagingSenderId: "833720237922",
+            appId: "1:833720237922:web:bdc9b889fa54587cddf63b",
+            measurementId: "G-30NLXPM7MZ"
+        };
+        // Initialize Firebase
+        firebase.initializeApp(firebaseConfig);
+        firebase.analytics();
+    </script>
+    
+</body>
+
+</html>
